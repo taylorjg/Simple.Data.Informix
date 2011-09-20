@@ -1,0 +1,5 @@
+*.suo
+*.nupkg
+obj
+bin
+IBM.Data.Informix.dll
