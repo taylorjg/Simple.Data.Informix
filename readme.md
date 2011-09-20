@@ -1,6 +1,6 @@
 # Simple.Data.Informix
 
-This project implements an Informix ADO Provider for Simple.Data.
+This project implements an Informix ADO provider for Simple.Data.
 
 *_(This project is currently work in progress)_*
 
