@@ -24,8 +24,8 @@ namespace Simple.Data.Informix
 
             using (var reader = command.ExecuteReader()) {
                 for (; reader.Read(); ) {
-                    string tabName = reader[0].ToString();
-                    string tabType = reader[1].ToString();
+                    string tabName = reader[0] as string;
+                    string tabType = reader[1] as string;
                     tables.Add(new Table(tabName, null, (tabType == "T") ? TableType.Table : TableType.View));
                 }
             }

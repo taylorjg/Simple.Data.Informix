@@ -52,14 +52,29 @@ namespace Simple.Data.Informix
 
         private static DbType GetDbType(int colType)
         {
+            // We only pass in the first byte of colType because the
+            // second byte can contain additional flags:
+            // 
+            // Bit Value Significance When Bit Is Set 
+            // 0x0100 NULL values are not allowed 
+            // 0x0200 Value is from a host variable 
+            // 0x0400 Float-to-decimal for networked database server 
+            // 0x0800 DISTINCT data type 
+            // 0x1000 Named ROW type 
+            // 0x2000 DISTINCT type from LVARCHAR base type 
+            // 0x4000 DISTINCT type from BOOLEAN base type 
+            // 0x8000 Collection is processed on client system 
+
             DbType clrType;
-            return DbTypes.TryGetValue(colType, out clrType) ? clrType : DbType.String;
+            int firstByte = colType & 0xFF;
+            return DbTypes.TryGetValue(firstByte, out clrType) ? clrType : DbType.String;
         }
 
         private static bool DetermineIsAutoincrement(int colType)
         {
             // SERIAL (6) or SERIAL8 (18)
-            return (colType == 6 || colType == 18);
+            int firstByte = colType & 0xFF;
+            return (firstByte == 6 || firstByte == 18);
         }
 
         public static InformixColumnInfo CreateColumnInfo(string fieldColumnValue, int colType, int colLength)

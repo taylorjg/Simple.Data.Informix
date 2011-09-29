@@ -17,10 +17,10 @@ namespace Simple.Data.Informix
             var command = cn.CreateCommand();
             command.CommandType = CommandType.Text;
             command.CommandText = @"
-                select sc.*
+                select trim(sc.colname), sc.coltype, sc.collength
                 from 'informix'.systables st, 'informix'.syscolumns sc
                 where st.tabname = ?
-                and st.tabtype = 'T'
+                and (st.tabtype = 'T' or st.tabtype = 'V')
                 and st.tabid >= 100
                 and st.tabid = sc.tabid";
             command.Parameters.Add("st.tabname", table.ActualName);
@@ -29,9 +29,9 @@ namespace Simple.Data.Informix
 
             using (var reader = command.ExecuteReader()) {
                 for (; reader.Read(); ) {
-                    string colName = reader["colname"] as string;
-                    int colType = (int)reader["coltype"];
-                    int colLength = (int)reader["collength"];
+                    string colName = reader[0] as string;
+                    int colType = Convert.ToInt32(reader[1]);
+                    int colLength = Convert.ToInt32(reader[2]);
                     var informixColumnInfo = InformixColumnInfoCreator.CreateColumnInfo(
                         colName,
                         colType,
@@ -44,7 +44,7 @@ namespace Simple.Data.Informix
                 from c in informixColumnInfos
                 select new Column(c.Name, table, c.IsAutoincrement, c.DbType, c.Capacity);
 
-            return results.AsEnumerable();
+            return results;
         }
     }
 }

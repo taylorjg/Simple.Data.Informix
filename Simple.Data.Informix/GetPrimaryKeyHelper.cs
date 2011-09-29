@@ -48,12 +48,12 @@ namespace Simple.Data.Informix
                 command.Parameters.Clear();
                 command.Parameters.Add("sc.tabid", tabid);
 
-                var parts = new List<short>();
+                var parts = new List<int>();
 
                 using (var reader = command.ExecuteReader()) {
                     if (reader.Read()) {
                         for (int i = 0; i < 16; i++) {
-                            short part = (short)reader.GetValue(i);
+                            int part = Convert.ToInt32(reader.GetValue(i));
                             if (part == 0) break;
                             parts.Add(part);
                         }
@@ -65,7 +65,7 @@ namespace Simple.Data.Informix
                 command.Parameters.Add("sc.tabid", tabid);
                 command.Parameters.Add("sc.colno", null);
 
-                foreach (short part in parts) {
+                foreach (int part in parts) {
                     command.Parameters["sc.colno"].Value = part;
                     string columnName = command.ExecuteScalar() as string;
                     columnNames.Add(columnName);

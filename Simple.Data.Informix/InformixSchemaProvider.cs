@@ -8,7 +8,7 @@ using Simple.Data.Ado.Schema;
 
 namespace Simple.Data.Informix
 {
-    internal class InformixSchemaProvider : ISchemaProvider
+    public class InformixSchemaProvider : ISchemaProvider
     {
         private readonly IConnectionProvider _connectionProvider;
 

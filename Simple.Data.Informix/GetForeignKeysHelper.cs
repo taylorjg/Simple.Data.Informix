@@ -14,19 +14,19 @@ namespace Simple.Data.Informix
         {
             public ForeignKeyQueryInfo()
             {
-                FKParts = new List<short>();
+                FKParts = new List<int>();
                 FKColumnNames = new List<string>();
-                PKParts = new List<short>();
+                PKParts = new List<int>();
                 PKColumnNames = new List<string>();
             }
 
             public string FKTabName { get; set; }
             public int FKTabId { get; set; }
-            public List<short> FKParts { get; private set; }
+            public List<int> FKParts { get; private set; }
             public List<string> FKColumnNames { get; private set; }
             public string PKTabName { get; set; }
             public int PKTabId { get; set; }
-            public List<short> PKParts { get; private set; }
+            public List<int> PKParts { get; private set; }
             public List<string> PKColumnNames { get; private set; }
             public int PKConstraintId { get; set; }
         }
@@ -85,12 +85,12 @@ namespace Simple.Data.Informix
                     for (; reader.Read(); ) {
                         var fkqi = new ForeignKeyQueryInfo();
                         fkqi.FKTabName = reader["fktabname"] as string;
-                        fkqi.FKTabId = (int)reader["fktabid"];
+                        fkqi.FKTabId = Convert.ToInt32(reader["fktabid"]);
                         fkqi.PKTabName = reader["pktabname"] as string;
-                        fkqi.PKTabId = (int)reader["pktabid"];
-                        fkqi.PKConstraintId = (int)reader["pkconstraintid"];
+                        fkqi.PKTabId = Convert.ToInt32(reader["pktabid"]);
+                        fkqi.PKConstraintId = Convert.ToInt32(reader["pkconstraintid"]);
                         for (int i = 0; i < 16; i++) {
-                            short part = (short)reader.GetValue(i);
+                            int part = Convert.ToInt32(reader.GetValue(i));
                             if (part == 0) break;
                             fkqi.FKParts.Add(part);
                         }
@@ -119,7 +119,7 @@ namespace Simple.Data.Informix
                     using (var reader = command.ExecuteReader()) {
                         for (; reader.Read(); ) {
                             for (int i = 0; i < 16; i++) {
-                                short part = (short)reader.GetValue(i);
+                                int part = Convert.ToInt32(reader.GetValue(i));
                                 if (part == 0) break;
                                 fkqi.PKParts.Add(part);
                             }
@@ -135,14 +135,14 @@ namespace Simple.Data.Informix
                 foreach (var fkqi in fkqis) {
 
                     command.Parameters["sc.tabid"].Value = fkqi.FKTabId;
-                    foreach (short part in fkqi.FKParts) {
+                    foreach (int part in fkqi.FKParts) {
                         command.Parameters["sc.colno"].Value = part;
                         string columnName = command.ExecuteScalar() as string;
                         fkqi.FKColumnNames.Add(columnName);
                     }
 
                     command.Parameters["sc.tabid"].Value = fkqi.PKTabId;
-                    foreach (short part in fkqi.PKParts) {
+                    foreach (int part in fkqi.PKParts) {
                         command.Parameters["sc.colno"].Value = part;
                         string columnName = command.ExecuteScalar() as string;
                         fkqi.PKColumnNames.Add(columnName);
@@ -158,7 +158,7 @@ namespace Simple.Data.Informix
                     masterTable: new ObjectName(null, fkqi.PKTabName),
                     masterColumns: fkqi.PKColumnNames);
 
-            return results.AsEnumerable();
+            return results.ToArray();
         }
     }
 }
