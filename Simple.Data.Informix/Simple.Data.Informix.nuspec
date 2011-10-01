@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Simple.Data.Informix</id>
+    <version>$version$</version>
+    <authors>Jonathan Taylor</authors>
+    <owners>Jonathan Taylor</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Informix ADO provider for the Simple.Data data access library.</description> 
+    <projectUrl>http://github.com/taylorjg/Simple.Data.Informix</projectUrl>
+    <iconUrl>http://simplefx.org/images/simpledata100x100.png</iconUrl>
+    <tags>Informix database data ado .net40</tags>
+  </metadata>
+</package>
