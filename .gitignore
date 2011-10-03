@@ -5,3 +5,6 @@ my_notes.txt
 obj
 bin
 IBM.Data.Informix.dll
+Simple.Data.Informix.Tests/app.config
+Simple.Data.Informix.Tests/Properties/Settings.settings
+Simple.Data.Informix.Tests/Properties/Settings.Designer.cs
