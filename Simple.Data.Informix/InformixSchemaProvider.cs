@@ -131,6 +131,11 @@ namespace Simple.Data.Informix
             return String.Concat(@"""", unquotedName, @"""");
         }
 
+        internal static void ResetIsDelimIdentInEffect()
+        {
+            m_s_isDelimIdentInEffect = null;
+        }
+
         private static bool? m_s_isDelimIdentInEffect = null;
         private static object m_s_isDelimIdentInEffectLockObject = new object();
 

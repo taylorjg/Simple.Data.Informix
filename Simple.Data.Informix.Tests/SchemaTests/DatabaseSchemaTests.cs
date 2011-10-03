@@ -1,16 +1,44 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using Simple.Data.TestHelper;
+using Simple.Data.Informix.Tests.Properties;
 
 namespace Simple.Data.Informix.Tests.SchemaTests
 {
-    [TestFixture]
     internal class DatabaseSchemaTests :  DatabaseSchemaTestsBase
     {
+        protected string _connectionString = null;
+
+        public DatabaseSchemaTests() {
+            _connectionString = Settings.Default.ConnectionString_V7;
+        }
+
         protected override Database GetDatabase()
         {
-            return Database.OpenConnection("Server=mu_camis_t_tcp; Database=jont; User ID=...; Password=...");
+            return Database.OpenConnection(_connectionString);
+        }
+
+        protected void ResetPrivateSchemaField()
+        {
+            FieldInfo[] fieldInfos = GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo fieldInfo =
+                (from f in fieldInfos
+                 where f.Name == "_schema"
+                 select f).SingleOrDefault();
+
+            if (fieldInfo == null) {
+                fieldInfos = GetType().BaseType.BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                fieldInfo =
+                    (from f in fieldInfos
+                     where f.Name == "_schema"
+                     select f).SingleOrDefault();
+            }
+
+            if (fieldInfo != null) {
+                fieldInfo.SetValue(this, null);
+            }
         }
 
         [Test]
@@ -80,15 +108,40 @@ namespace Simple.Data.Informix.Tests.SchemaTests
         }
 
         [Test]
-        public void TestQuoteObjectName_NotAlreadyQuoted()
+        public void TestQuoteObjectName_AddsQuotesWhenNotAlreadyQuoted()
         {
             Assert.AreEqual(@"""my_table""", Schema.QuoteObjectName("my_table"));
         }
 
         [Test]
-        public void TestQuoteObjectName_AlreadyQuoted()
+        public void TestQuoteObjectName_DoesNotAddMoreQuotesWhenAlreadyQuoted()
         {
             Assert.AreEqual(@"""my_table""", Schema.QuoteObjectName(@"""my_table"""));
+        }
+
+        [Test]
+        public void TestQuoteObjectName_DoesNotAddQuotesWhenDelimIdentOff()
+        {
+            string savedConnectionString = _connectionString;
+
+            ResetPrivateSchemaField();
+            _connectionString += "; DELIMIDENT=N";
+            InformixSchemaProvider.ResetIsDelimIdentInEffect();
+
+            Assert.AreEqual("my_table", Schema.QuoteObjectName("my_table"));
+
+            ResetPrivateSchemaField();
+            _connectionString = savedConnectionString;
+            InformixSchemaProvider.ResetIsDelimIdentInEffect();
+        }
+    }
+
+    [TestFixture]
+    internal class DatabaseSchemaTests_V11 : DatabaseSchemaTests
+    {
+        public DatabaseSchemaTests_V11()
+        {
+            _connectionString = Settings.Default.ConnectionString_V11;
         }
     }
 }
