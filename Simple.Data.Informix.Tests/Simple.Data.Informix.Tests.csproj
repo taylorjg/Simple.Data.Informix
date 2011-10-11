@@ -77,11 +77,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="QueryTest.cs" />
-    <Compile Include="Resources\Resources.Designer.cs" />
+    <Compile Include="Resources\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SchemaTests\DatabaseSchemaTests.cs" />
     <Compile Include="TestTraceListener.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="UpdateTests.cs" />
+    <EmbeddedResource Include="Resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.Data.Informix\Simple.Data.Informix.csproj">
@@ -98,7 +106,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
+    <Content Include="Resources\call_type.txt" />
+    <Content Include="Resources\catalog.txt" />
+    <Content Include="Resources\customer.txt" />
+    <Content Include="Resources\cust_calls.txt" />
+    <Content Include="Resources\items.txt" />
+    <Content Include="Resources\manufact.txt" />
+    <Content Include="Resources\orders.txt" />
+    <Content Include="Resources\state.txt" />
+    <Content Include="Resources\stock.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
