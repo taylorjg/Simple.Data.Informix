@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using NUnit.Framework;
-using Simple.Data.TestHelper;
 using Simple.Data.Informix.Tests.Properties;
+using Simple.Data.TestHelper;
+using NUnit.Framework;
 
 namespace Simple.Data.Informix.Tests.SchemaTests
 {

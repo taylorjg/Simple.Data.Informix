@@ -25,7 +25,7 @@ namespace Simple.Data.Informix
 
         public string GetIdentityFunction()
         {
-            return "SELECT DBINFO ('sqlca.sqlerrd1') FROM systables WHERE tabid = 1";
+            return "(SELECT DBINFO('sqlca.sqlerrd1') FROM systables WHERE tabid = 1)";
         }
 
         public IProcedureExecutor GetProcedureExecutor(AdoAdapter adapter, ObjectName procedureName)
