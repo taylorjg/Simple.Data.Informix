@@ -8,9 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Simple.Data.Informix")]
 [assembly: AssemblyDescription("Informix add-in for ADO adapter.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ascribe PLC")]
 [assembly: AssemblyProduct("Simple.Data.Informix")]
-//[assembly: AssemblyCopyright("Copyright © Ascribe PLC 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +30,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.8.0.1")]
-[assembly: AssemblyFileVersion("0.8.0.1")]
+[assembly: AssemblyVersion("0.1.0.1")]
+[assembly: AssemblyFileVersion("0.1.0.1")]
 
 [assembly: InternalsVisibleTo("Simple.Data.Informix.Tests")]
