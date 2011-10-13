@@ -22,7 +22,7 @@ Tests were conducted on Windows XP SP3 using IBM Informix Client-SDK 3.50.TC5.
 - Fix problem - System.ArgumentException / "Unknown SQL type - INTERVAL_DAY."
 - Add tests for more column data types
 - Run all unit tests against both V7 and V11
-- Raise an issue against Simple.Data whereby a stack overflow occurs when trying to use .Take() against my provider which currently does not support IQueryPager.
+- Raise an issue against Simple.Data whereby a stack overflow occurs when trying to use .Take() against my provider which currently does not support IQueryPager
 
 ## Installation
 
@@ -30,6 +30,7 @@ Obtain and install the IBM Informix Client-SDK.
 
 ## Demo Program
 
+```C#
 using System;
 using Simple.Data;
 
@@ -47,3 +48,4 @@ namespace TestApp
         }
     }
 }
+```
