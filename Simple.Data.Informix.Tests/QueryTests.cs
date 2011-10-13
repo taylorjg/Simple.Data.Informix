@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class QueryTest
+    internal class QueryTests
     {
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
