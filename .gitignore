@@ -2,6 +2,7 @@ Copy*of*.*
 my_notes.txt
 *.suo
 *.nupkg
+*.user
 obj
 bin
 IBM.Data.Informix.dll

@@ -15,6 +15,7 @@ namespace Simple.Data.Informix.Tests
 
         public static void Reset(string connectionString)
         {
+            // Ensure that our date format matches that of the .unl files.
             Environment.SetEnvironmentVariable("DBDATE", "MDY4/");
 
             using (var cn = new IfxConnection(connectionString)) {
@@ -61,6 +62,7 @@ namespace Simple.Data.Informix.Tests
             int numColumns = columnNames.Length;
             string joinedColumnNames = string.Join(", ", columnNames);
 
+            // Load the .unl file (renamed to .txt and added as a resource file).
             string fileContents = Resources.Resources.ResourceManager.GetString(tableName);
             string[] lines = fileContents.Split(new[] { "\r\n" }, StringSplitOptions.None);
 

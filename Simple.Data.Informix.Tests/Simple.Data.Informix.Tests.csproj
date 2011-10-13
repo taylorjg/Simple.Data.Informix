@@ -66,6 +66,7 @@
     <Compile Include="Customer.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DatabaseOpenerTests.cs" />
+    <Compile Include="DeleteTests.cs" />
     <Compile Include="FindTests.cs" />
     <Compile Include="InsertTests.cs" />
     <Compile Include="NaturalJoinTest.cs" />

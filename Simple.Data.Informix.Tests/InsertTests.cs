@@ -9,7 +9,7 @@ namespace Simple.Data.Informix.Tests
     internal class InsertTests
     {
         [TestFixtureSetUp]
-        public void Setup()
+        public void TestFixtureSetUp()
         {
             DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
         }
