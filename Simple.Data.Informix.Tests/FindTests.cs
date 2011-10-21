@@ -7,25 +7,46 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class FindTests
+    internal class FindTests_V7
     {
+        protected string _connectionString = null;
+
+        public FindTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
         public void TestProviderIsInformixConnectionProvider()
         {
-            var provider = new ProviderHelper().GetProviderByConnectionString(Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.TraceTestName();
+            var provider = new ProviderHelper().GetProviderByConnectionString(_connectionString);
             Assert.IsInstanceOf(typeof(InformixConnectionProvider), provider);
         }
 
         [Test]
         public void TestProviderIsInformixConnectionProviderFromOpen()
         {
-            Database db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            Database db = OpenDatabase();
             Assert.IsInstanceOf(typeof(AdoAdapter), db.GetAdapter());
             Assert.IsInstanceOf(typeof(InformixConnectionProvider), ((AdoAdapter)db.GetAdapter()).ConnectionProvider);
         }
@@ -33,7 +54,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindByCustomerNum()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var customer = db.Customers.FindByCustomerNum(101);
             Assert.AreEqual(101, customer.customer_num);
         }
@@ -41,7 +63,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindByIdWithCast()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var customer = (Customer)db.Customers.FindByCustomerNum(101);
             Assert.AreEqual(101, customer.CustomerNum);
             Assert.AreEqual("Ludwig", customer.FName.Trim());
@@ -58,7 +81,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindByReturnsOne()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var customer = (Customer)db.Customers.FindByFName("Bob");
             Assert.AreEqual(119, customer.CustomerNum);
         }
@@ -66,7 +90,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindAllByName()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             IEnumerable<Customer> customers = db.Customers.FindAllByFName("Bob").Cast<Customer>();
             Assert.AreEqual(1, customers.Count());
         }
@@ -74,7 +99,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindAllByPartialName()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             IEnumerable<Customer> customers = db.Customers.FindAll(db.Customers.FName.Like("Bob")).ToList<Customer>();
             Assert.AreEqual(1, customers.Count());
         }
@@ -82,7 +108,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestAllCount()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var count = db.Customers.All().ToList().Count;
             Assert.AreEqual(28, count);
         }
@@ -98,7 +125,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestImplicitCast()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Customer customer = db.Customers.FindByCustomerNum(101);
             Assert.AreEqual(101, customer.CustomerNum);
         }
@@ -106,7 +134,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestImplicitEnumerableCast()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             foreach (Customer customer in db.Customers.All()) {
                 Assert.IsNotNull(customer);
             }
@@ -139,7 +168,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestFindOnAView()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var custView = db.CustView.FindByFirstName("Frank");
             Assert.IsNotNull(custView);
             Assert.AreEqual("Albertson", custView.LastName.Trim());
@@ -148,7 +178,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestCast()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var customerQuery = db.Customers.All().Cast<Customer>() as IEnumerable<Customer>;
             Assert.IsNotNull(customerQuery);
             var customers = customerQuery.ToList();

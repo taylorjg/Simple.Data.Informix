@@ -7,11 +7,11 @@ using NUnit.Framework;
 
 namespace Simple.Data.Informix.Tests.SchemaTests
 {
-    internal class DatabaseSchemaTests :  DatabaseSchemaTestsBase
+    internal class DatabaseSchemaTests_V7 :  DatabaseSchemaTestsBase
     {
         protected string _connectionString = null;
 
-        public DatabaseSchemaTests() {
+        public DatabaseSchemaTests_V7() {
             _connectionString = Settings.Default.ConnectionString_V7;
         }
 
@@ -147,7 +147,7 @@ namespace Simple.Data.Informix.Tests.SchemaTests
     }
 
     [TestFixture]
-    internal class DatabaseSchemaTests_V11 : DatabaseSchemaTests
+    internal class DatabaseSchemaTests_V11 : DatabaseSchemaTests_V7
     {
         public DatabaseSchemaTests_V11()
         {

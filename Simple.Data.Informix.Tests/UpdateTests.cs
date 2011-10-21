@@ -5,18 +5,38 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class UpdateTests
+    internal class UpdateTests_V7
     {
+        protected string _connectionString = null;
+
+        public UpdateTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
         public void TestUpdateWithNamedArguments()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             db.Customers.UpdateByCustomerNum(CustomerNum: 105, LName: "Chandler", State: "GA");
             var customer = db.Customers.FindByCustomerNum(105);
@@ -28,7 +48,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestUpdateWithStaticTypeObject()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             var customer = new Customer { CustomerNum = 113, FName = "Lana-X", LName="Beatty-Y", Company = "Sportstown-Z" };
 
@@ -45,7 +66,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestUpdateWithDynamicTypeObject()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             dynamic customer = new ExpandoObject();
             customer.CustomerNum = 114;
@@ -66,7 +88,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestUpdateWithVarBinaryMaxColumn()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             var data = new byte[56];
             for (int i = 0; i < data.Length; i++) {
@@ -79,6 +102,14 @@ namespace Simple.Data.Informix.Tests
 
             Assert.IsNotNull(actual);
             Assert.AreEqual(data, actual.CatPicture);
+        }
+    }
+
+    internal class UpdateTests_V11 : UpdateTests_V7
+    {
+        public UpdateTests_V11()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V11;
         }
     }
 }

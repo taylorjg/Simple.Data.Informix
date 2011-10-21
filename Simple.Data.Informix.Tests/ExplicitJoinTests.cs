@@ -4,18 +4,38 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class ExplicitJoinTests
+    internal class ExplicitJoinTests_V7
     {
+        protected string _connectionString = null;
+
+        public ExplicitJoinTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
         public void TestExplicitJoinNamedParametersForm()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             var rows = db.Customers.Query()
                 .Join(db.Orders, CustomerNum: db.Customers.CustomerNum)
@@ -30,7 +50,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestExplicitJoinOnXxxForm()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             var rows = db.Customers.Query()
                 .Join(db.Orders).On(db.Customers.CustomerNum == db.Orders.CustomerNum)
@@ -40,6 +61,14 @@ namespace Simple.Data.Informix.Tests
             var row = rows[0];
             Assert.IsNotNull(row);
             Assert.AreEqual("Alfred", row.FName.Trim());
+        }
+    }
+
+    internal class ExplicitJoinTests_V11 : ExplicitJoinTests_V7
+    {
+        public ExplicitJoinTests_V11()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V11;
         }
     }
 }

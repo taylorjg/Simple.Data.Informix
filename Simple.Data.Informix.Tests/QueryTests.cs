@@ -6,195 +6,121 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class QueryTests
+    internal class QueryTests_V7
     {
+        protected string _connectionString = null;
+
+        public QueryTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
-        public void CountWithNoCriteriaShouldSelectThree()
+        public void CountWithNoCriteriaShouldSelectTwentyEight()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(28, db.Customers.GetCount());
         }
 
         [Test]
         public void CountWithCriteriaShouldSelectTwo()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(2, db.Customers.GetCount(db.Customers.FName == "Frank"));
         }
 
         [Test]
         public void CountByShouldSelectOne()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(1, db.Customers.GetCountByFName("Kim"));
         }
 
         [Test]
         public void ExistsWithNoCriteriaShouldReturnTrue()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(true, db.Customers.Exists());
         }
 
         [Test]
         public void ExistsWithValidCriteriaShouldReturnTrue()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(true, db.Customers.Exists(db.Customers.FName == "Frank"));
         }
 
         [Test]
         public void ExistsWithInvalidCriteriaShouldReturnFalse()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(false, db.Customers.Exists(db.Customers.FName == "Bogus"));
         }
 
         [Test]
         public void ExistsByValidValueShouldReturnTrue()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(true, db.Customers.ExistsByFName("Frank"));
         }
 
         [Test]
         public void ExistsByInvalidValueShouldReturnFalse()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             Assert.AreEqual(false, db.Customers.ExistsByFName("Dracula"));
         }
 
         [Test]
         public void ColumnAliasShouldChangeDynamicPropertyName()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var actual = db.Customers.QueryByCustomerNum(101).Select(db.Customers.FName.As("MyFNameAlias")).First();
             Assert.AreEqual("Ludwig", actual.MyFNameAlias.Trim());
         }
 
-        //[Test]
-        //public void ShouldSelectFromOneToTen()
-        //{
-        //    var db = DatabaseHelper.Open();
-        //    var query = db.Customers.QueryByCustomerNum(101.to(127)).Take(10);
-        //    int index = 101;
-        //    // Get stack overflow when we try to iterate the first item if the
-        //    // connection provider does not implement (export via MEF) IQueryPager.
-        //    foreach (var row in query) {
-        //        Assert.AreEqual(index, row.CustomerNum);
-        //        index++;
-        //    }
-        //}
-
-        //[Test]
-        //public void ShouldSelectFromElevenToTwenty()
-        //{
-        //    var db = DatabaseHelper.Open();
-        //    var query = db.PagingTest.QueryById(1.to(100)).Skip(10).Take(10);
-        //    int index = 11;
-        //    foreach (var row in query)
-        //    {
-        //        Assert.AreEqual(index, row.Id);
-        //        index++;
-        //    }
-        //}
-
-        //[Test]
-        //public void ShouldSelectFromOneHundredToNinetyOne()
-        //{
-        //    var db = DatabaseHelper.Open();
-        //    var query = db.PagingTest.QueryById(1.to(100)).OrderByDescending(db.PagingTest.Id).Skip(0).Take(10);
-        //    int index = 100;
-        //    foreach (var row in query)
-        //    {
-        //        Assert.AreEqual(index, row.Id);
-        //        index--;
-        //    }
-        //}
-
-        //[Test]
-        //public void WithTotalCountShouldGiveCount()
-        //{
-        //    Promise<int> count;
-        //    var db = DatabaseHelper.Open();
-        //    var list = db.PagingTest.QueryById(1.to(50))
-        //        .WithTotalCount(out count)
-        //        .Take(10)
-        //        .ToList();
-
-        //    Assert.AreEqual(10, list.Count);
-        //    Assert.IsTrue(count.HasValue);
-        //    Assert.AreEqual(50, count);
-        //}
-
-        //[Test]
-        //public void WithTotalCountWithExplicitSelectShouldGiveCount()
-        //{
-        //    Promise<int> count;
-        //    var db = DatabaseHelper.Open();
-        //    List<dynamic> list = db.PagingTest.QueryById(1.to(50))
-        //        .Select(db.PagingTest.Id)
-        //        .WithTotalCount(out count)
-        //        .Take(10)
-        //        .ToList();
-
-        //    Assert.IsTrue(count.HasValue);
-        //    Assert.AreEqual(50, count);
-        //    Assert.AreEqual(10, list.Count);
-        //    foreach (var dictionary in list.Cast<IDictionary<string,object>>())
-        //    {
-        //        Assert.AreEqual(1, dictionary.Count);
-        //    }
-        //}
-
-        //[Test]
-        //public void WithTotalCountShouldGiveCount_ObsoleteFutureVersion()
-        //{
-        //    Future<int> count;
-        //    var db = DatabaseHelper.Open();
-        //    var list = db.PagingTest.QueryById(1.to(50))
-        //        .WithTotalCount(out count)
-        //        .Take(10)
-        //        .ToList();
-
-        //    Assert.AreEqual(10, list.Count);
-        //    Assert.IsTrue(count.HasValue);
-        //    Assert.AreEqual(50, count);
-        //}
-
         [Test]
         public void ShouldDirectlyQueryDetailTable()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var order = db.Customers.QueryByFNameAndCompany("Ludwig", "All Sports Supplies").Orders.FirstOrDefault();
             Assert.IsNotNull(order);
             Assert.AreEqual(1002, order.OrderNum);
         }
 
-        //[Test]
-        //public void ShouldReturnNullWhenNoRowFound()
-        //{
-        //    var db = DatabaseHelper.Open();
-        //    string name = db.Customers
-        //                .Query()
-        //                .Select(db.Customers.FName)
-        //                .Where(db.Customers.CustomerNum == 99) // There is no CustomerNum 99
-        //                .OrderByFName()
-        //                .Take(1) // Should return only one record no matter what
-        //                .ToScalarOrDefault<string>();
-        //    Assert.IsNull(name);
-        //}
-
         [Test]
         public void ToScalarListShouldReturnStringList()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             List<string> name = db.Customers
                         .Query()
                         .Select(db.Customers.FName)
@@ -207,7 +133,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void ToScalarArrayShouldReturnStringArray()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             string[] name = db.Customers
                         .Query()
                         .Select(db.Customers.FName)
@@ -220,7 +147,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void HavingWithMinDateShouldReturnCorrectRow()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row =
                 db.Customers.Query().Having(db.Customers.Orders.OrderDate.Min() <=
                                                   new DateTime(1994, 5, 20))
@@ -232,7 +160,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void HavingWithMaxDateShouldReturnCorrectRow()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row =
                 db.Customers.QueryByState("CA").Having(db.Customers.Orders.OrderDate.Max() >=
                                                   new DateTime(1994, 6, 27))
@@ -244,7 +173,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void HavingWithCountShouldReturnCorrectRow()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row = db.Customers.Query()
                 .Having(db.Customers.Orders.CustomerNum.Count() == 4)
                 .FirstOrDefault();
@@ -255,7 +185,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void HavingWithAverageShouldReturnCorrectRow()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row = db.Customers.Query()
                 .Having(db.Customers.Orders.ShipCharge.Average() == 9.50)
                 .FirstOrDefault();
@@ -266,9 +197,158 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void ToScalarOrDefault()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             int max = db.Orders.FindAllByCustomerNum(99).Select(db.Orders.OrderNum.Max()).ToScalarOrDefault<int>();
             Assert.AreEqual(0, max);
+        }
+    }
+
+    [TestFixture]
+    internal class QueryTests_V11 : QueryTests_V7
+    {
+        public QueryTests_V11()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V11;
+        }
+
+        // TODO - raise an issue against Simple.Data
+        // Get stack overflow when we try to iterate the first item of a query involving Skip()/Take() if the
+        // ADO Provider does not implement IQueryPager (as a MEF export).
+        //
+        // Experiment:
+        // I wonder if this problem would be seen with the SqlServer ADO Provider
+        // if I made a local change to it so as not to implement IQueryPager ???
+
+        [Test]
+        public void ShouldSelectFirstFive()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+            var query = db.Customers.All().OrderByCustomerNum().Take(5);
+            int customerNum = 101;
+            foreach (var row in query) {
+                Assert.AreEqual(customerNum++, row.CustomerNum);
+            }
+        }
+
+        [Test]
+        public void ShouldSelectFromElevenToFifteen()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+            var query = db.Customers.All().OrderByCustomerNum().Skip(10).Take(5);
+            int customerNum = 111;
+            foreach (var row in query) {
+                Assert.AreEqual(customerNum++, row.CustomerNum);
+            }
+        }
+
+        [Test]
+        public void ShouldSelectLastTen()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+            var query = db.Customers.All().OrderByDescending(db.Customers.CustomerNum).Skip(0).Take(10);
+            int customerNum = 128;
+            foreach (var row in query) {
+                Assert.AreEqual(customerNum--, row.CustomerNum);
+            }
+        }
+
+        [Test]
+        public void ShouldReturnNullWhenNoRowFound()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+
+            string name = db.Customers
+                .Query()
+                .Select(db.Customers.FName)
+                .Where(db.Customers.CustomerNum < 101)
+                .OrderByFName()
+                .Take(1)
+                .ToScalarOrDefault<string>();
+
+            Assert.IsNull(name);
+        }
+
+
+        // The remaining tests below involve WithTotalCount(). When the property,
+        // InformixConnectionProvider.SupportsCompoundStatements, is set to return
+        // false, these tests fail with a stack overflow around the area of:
+        //
+        // AdoAdapter.RunQuery()
+        // AdoAdapter.RunQueryWithCount()
+        // AdoAdapter.RunQueries()
+        //
+        // Experiment:
+        // I wonder if this problem would be seen with the SqlServer ADO Provider
+        // if I made a local change so that SupportsCompoundStatements returned false ???
+        //
+        // When the property is set to return true, these tests fail with:
+        // ERROR [HY000] [Informix .NET provider][Informix]Cannot use a select or any of the database statements in a multi-query prepare.
+
+
+        [Test]
+        [Ignore]
+        public void WithTotalCountShouldGiveCount()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+
+            Promise<int> count;
+            var list = db.Customers.Query(db.Customers.CustomerNum >= 101)
+                .WithTotalCount(out count)
+                .Take(10)
+                .ToList();
+
+            Assert.AreEqual(10, list.Count);
+            Assert.IsTrue(count.HasValue);
+            Assert.AreEqual(28, count.Value);
+            Assert.AreEqual(28, count);
+        }
+
+        [Test]
+        [Ignore]
+        public void WithTotalCountWithExplicitSelectShouldGiveCount()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+
+            Promise<int> count;
+            List<dynamic> list = db.Customers.All()
+                .Select(db.Customers.CustomerNum)
+                .WithTotalCount(out count)
+                .Take(10)
+                .ToList();
+
+            Assert.IsTrue(count.HasValue);
+            Assert.AreEqual(28, count.Value);
+            Assert.AreEqual(28, count);
+            Assert.AreEqual(10, list.Count);
+            foreach (var dictionary in list.Cast<IDictionary<string, object>>()) {
+                Assert.AreEqual(1, dictionary.Count);
+            }
+        }
+
+        [Test]
+        [Ignore]
+        public void WithTotalCountShouldGiveCount_ObsoleteFutureVersion()
+        {
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
+
+            Future<int> count;
+            var list = db.Customers.Query(db.Customers.CustomerNum >= 101)
+                .WithTotalCount(out count)
+                .Take(10)
+                .ToList();
+
+            Assert.AreEqual(10, list.Count);
+            Assert.IsTrue(count.HasValue);
+            Assert.AreEqual(28, count.Value);
+            Assert.AreEqual(28, count);
         }
     }
 }

@@ -45,6 +45,10 @@ namespace Simple.Data.Informix
 
         public bool SupportsCompoundStatements
         {
+            // I guess not. If I set this property to return true then the following line...
+            // db.Customers.All().WithTotalCount(out count).ToList();
+            // ...fails with this:
+            // ERROR [HY000] [Informix .NET provider][Informix]Cannot use a select or any of the database statements in a multi-query prepare.
             get { return false; }
         }
 

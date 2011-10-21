@@ -8,15 +8,22 @@ namespace Simple.Data.Informix.Tests
     internal class ConversionTests
     {
         [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        public static void TestFixtureSetUp()
         {
+            TraceHelper.BeginTrace();
             DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
         }
 
+        [TestFixtureTearDown]
+        public static void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
+        }
 
         [Test]
         public void WeirdTypeGetsConvertedToInt()
         {
+            TraceHelper.TraceTestName();
             var db = DatabaseHelper.Open();
 
             var weirdValue = new WeirdType(101);
@@ -27,6 +34,7 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void WeirdTypeUsedInQueryGetsConvertedToInt()
         {
+            TraceHelper.TraceTestName();
             var db = DatabaseHelper.Open();
 
             var weirdValue = new WeirdType(101);
@@ -38,6 +46,7 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void InsertingWeirdTypesFromExpando()
         {
+            TraceHelper.TraceTestName();
             var db = DatabaseHelper.Open();
 
             dynamic expando = new ExpandoObject();

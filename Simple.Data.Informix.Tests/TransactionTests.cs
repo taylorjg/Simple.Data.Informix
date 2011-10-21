@@ -4,18 +4,38 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class TransactionTests
+    internal class TransactionTests_V7
     {
+        protected string _connectionString = null;
+
+        public TransactionTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
         public void TestCommit()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             int oldNumOrders = db.Orders.All().ToList().Count;
             int oldNumItems = db.Items.All().ToList().Count;
@@ -40,7 +60,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestRollback()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             int oldNumOrders = db.Orders.All().ToList().Count;
             int oldNumItems = db.Items.All().ToList().Count;
@@ -58,7 +79,8 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void QueryInsideTransaction()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
 
             using (var tx = db.BeginTransaction()) {
                 tx.Customers.Insert(FName: "Geoff", LName: "Woade");
@@ -68,5 +90,13 @@ namespace Simple.Data.Informix.Tests
                 Assert.AreEqual("Woade", customer.LName.Trim());
             }
         } 
+    }
+
+    internal class TransactionTests_V11 : TransactionTests_V7
+    {
+        public TransactionTests_V11()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V11;
+        }
     }
 }

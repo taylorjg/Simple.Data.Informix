@@ -4,18 +4,38 @@ using NUnit.Framework;
 namespace Simple.Data.Informix.Tests
 {
     [TestFixture]
-    internal class NaturalJoinTests
+    internal class NaturalJoinTests_V7
     {
+        protected string _connectionString = null;
+
+        public NaturalJoinTests_V7()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V7;
+        }
+
+        protected dynamic OpenDatabase()
+        {
+            return DatabaseHelper.Open(_connectionString);
+        }
+
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            DatabaseHelper.Reset(Simple.Data.Informix.Tests.Properties.Settings.Default.ConnectionString_V7);
+            TraceHelper.BeginTrace();
+            DatabaseHelper.Reset(_connectionString);
+        }
+
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            TraceHelper.EndTrace();
         }
 
         [Test]
         public void TestNaturalJoinDynamicForm()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row = db.Customers.Find(db.Customers.Orders.OrderDate == new DateTime(1994, 6, 17));
             Assert.IsNotNull(row);
             Assert.AreEqual("Alfred", row.FName.Trim());
@@ -24,10 +44,19 @@ namespace Simple.Data.Informix.Tests
         [Test]
         public void TestNaturalJoinIndexersForm()
         {
-            var db = DatabaseHelper.Open();
+            TraceHelper.TraceTestName();
+            var db = OpenDatabase();
             var row = db["Customers"].Find(db["Customers"]["Orders"]["OrderDate"] == new DateTime(1994, 6, 17));
             Assert.IsNotNull(row);
             Assert.AreEqual("Alfred", row.FName.Trim());
+        }
+    }
+
+    internal class NaturalJoinTests_V11 : NaturalJoinTests_V7
+    {
+        public NaturalJoinTests_V11()
+        {
+            _connectionString = Properties.Settings.Default.ConnectionString_V11;
         }
     }
 }
